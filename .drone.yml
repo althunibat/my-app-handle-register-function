@@ -1,0 +1,29 @@
+kind: pipeline
+name: registration-handler 
+type: docker
+steps:
+  - name: compile-api
+    image: mcr.microsoft.com/dotnet/core/sdk:3.1
+    commands:
+    - dotnet publish -c Release -o ./release
+  - name: build-publish-image
+    image: plugins/docker
+    settings:
+      username: admin
+      password:
+        from_secret: docker_password
+      repo: harbor.godwit.io/library/registration-handler
+      registry: harbor.godwit.io/library
+      auto_tag: true
+      purge: true
+      dockerfile: ./Dockerfile
+  - name: deploy
+    when:
+      event: [tag]
+    image: openfaas/faas-cli:0.12.8
+    commands:
+    - echo $PASSWORD | faas-cli login -g https://fn.godwit.io -s
+    - faas-cli deploy -f ./function.yml
+    environment:
+      PASSWORD:
+        from_secret: docker_password

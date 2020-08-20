@@ -1,0 +1,32 @@
+{
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:55376",
+      "sslPort": 0
+    }
+  },
+  "$schema": "http://json.schemastore.org/launchsettings.json",
+  "profiles": {
+    "HandleRegistrationAction": {
+      "commandName": "Project",
+      "launchBrowser": false,
+      "launchUrl": "weatherforecast",
+      "environmentVariables": {
+        "DB_USERNAME": "postgres",
+        "DB_PASSWORD": "1qaz!QAZ",
+        "CERT_PASSWORD": "P@ssw0rd.123",
+        "DB_HOST": "apps.db.godwit.io",
+        "CERT_PATH": "./",
+        "CERT_FILENAME": "godwit.cert.pfx",
+        "HASURA_DB": "keto_db",
+        "ISSUER": "idp.godwit.io",
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "REDIS_PASSWORD": "1qaz!QAZ",
+        "AUDIENCE": "026729777474407414451162"
+      },
+      "applicationUrl": "http://0.0.0.0:5600"
+    }
+  }
+}

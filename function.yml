@@ -1,0 +1,19 @@
+version: 1.0
+provider:
+  name: openfaas
+  gateway: https://fn.godwit.io
+functions:
+  handle-register-action:
+    lang: dockerfile
+    handler: .
+    image: harbor.godwit.io/library/registration-handler:${DRONE_TAG}
+    environment:
+      DB_HOST: postgres.apps.svc
+      HASURA_DB: keto_db
+      DB_USERNAME: postgres
+      DB_PASSWORD: 1qaz!QAZ
+      CERT_PATH: /app/
+      CERT_FILENAME: godwit.cert.pfx
+      CERT_PASSWORD: P@ssw0rd.123
+      REDIS_PASSWORD: 1qaz!QAZ
+      REDIS_HOST: 'redis-master.apps.svc:6379,redis-slave.apps.svc:6379'
