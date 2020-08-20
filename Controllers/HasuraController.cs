@@ -12,13 +12,13 @@ using NodaTime;
 namespace Godwit.HandleRegistrationAction.Controllers {
     [ApiController]
     [Route("")]
-    public class RegistrationController : ControllerBase {
+    public class HasuraController : ControllerBase {
         private readonly ILogger _logger;
         private readonly UserManager<User> _manager;
         private readonly IValidator<ActionData> _validator;
 
-        public RegistrationController(IValidator<ActionData> validator,
-            ILogger<RegistrationController> logger, UserManager<User> manager) {
+        public HasuraController(IValidator<ActionData> validator,
+            ILogger<HasuraController> logger, UserManager<User> manager) {
             _validator = validator;
             _logger = logger;
             _manager = manager;
@@ -26,11 +26,17 @@ namespace Godwit.HandleRegistrationAction.Controllers {
 
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] ActionData model) {
+            _logger.LogInformation($"Call Started by {model.Session.UserId} having role {model.Session.Role}");
             var validation = _validator.Validate(model);
             if (!validation.IsValid)
-                return Ok(new {
+            {
+                _logger.LogWarning("request validation failed!");
+                return Ok(new
+                {
                     Errors = validation.Errors.Select(e => e.ErrorMessage).ToArray()
                 });
+            }
+
             var user = new User(model.Input.UserName) {
                 BirthDate = LocalDate.FromDateTime(model.Input.BirthDate),
                 CreatedOn = Instant.FromDateTimeOffset(DateTimeOffset.Now),
@@ -44,9 +50,14 @@ namespace Godwit.HandleRegistrationAction.Controllers {
             try {
                 var result = await _manager.CreateAsync(user, model.Input.Password).ConfigureAwait(false);
                 if (result != IdentityResult.Success)
-                    return Ok(new {
+                {
+                    _logger.LogWarning(result.Errors.First().Description);
+                    return Ok(new
+                    {
                         Errors = result.Errors.Select(e => e.Description).ToArray()
                     });
+                }
+
                 return Ok(new {user.Id});
             }
             catch (Exception e) {
