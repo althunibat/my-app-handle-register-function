@@ -26,7 +26,7 @@ namespace Godwit.HandleRegistrationAction.Controllers {
 
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] ActionData model) {
-            _logger.LogInformation($"Call Started by {model.Session.UserId} having role {model.Session.Role}");
+            _logger.LogInformation($"Call Started by {model?.Session?.UserId ?? "not-provided"} having role {model?.Session?.Role ?? "not-provided"}");
             var validation = _validator.Validate(model);
             if (!validation.IsValid)
             {
